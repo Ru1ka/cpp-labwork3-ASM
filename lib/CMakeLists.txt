@@ -1,0 +1,5 @@
+add_library(args_parsing args_parsing.h args_parsing.cpp)
+add_library(read_tsv IO_manager.h IO_manager.cpp)
+add_library(structures structures.h structures.cpp)
+add_library(iteration iteration.h iteration.cpp)
+add_library(scripts scripts.h scripts.cpp)
