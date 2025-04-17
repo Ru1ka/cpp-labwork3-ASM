@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
             std::cout << "freq: " << CLI_data.freq << "\n";
         }
 
-        TSVData data = readBMP("./input/a.bmp");
+        TSVData data = readTSV(CLI_data.input);
         if (CLI_data.debug) {
             for (int i = 0; i < 10; ++i) {
                 for (int j = 0; j < (*data.matrix).size_x; ++j) {

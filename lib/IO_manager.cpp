@@ -8,9 +8,8 @@ struct ParsedLine {
 
 ParsedLine parseLine(char* line) {
     ParsedLine result;
-
     result.x = atoi(line);
-
+    
     line = strchr(line, '\t') + 1;
     result.y = atoi(line);
 
@@ -144,49 +143,4 @@ void saveBMP(char* path, Matrix* data) {
     }
     std::fclose(output_file);
     std::cout << "Saved image in: " << path << "\t:---------:\tImage size: " << size_x << "x" << size_y;
-}
-
-TSVData readBMP(char* input_path) {
-    FILE* file = std::fopen(input_path, "rb");
-    if (file == nullptr) {
-        throw std::runtime_error("ERROR: Failed to open input file.");
-    }
-    char header[HEADER_SIZE];
-    std::fread(header, sizeof(char), HEADER_SIZE, file);
-
-    uint32_t dibHeaderSize;
-    std::fread(&dibHeaderSize, sizeof(uint32_t), 1, file);
-
-    uint32_t width, height;
-    std::fread(&width, sizeof(uint32_t), 1, file);
-    std::fread(&height, sizeof(uint32_t), 1, file);
-
-    uint16_t planes, bitCount;
-    std::fread(&planes, sizeof(uint16_t), 1, file);
-    std::fread(&bitCount, sizeof(uint16_t), 1, file);
-
-    std::fseek(file, dibHeaderSize - 16, SEEK_CUR);
-
-    TSVData result;
-    result.matrix = new Matrix(height + (BORDER_SIZE * 2), width + (BORDER_SIZE * 2));
-
-    uint32_t rowPadding = (4 - (width * 3) % 4) % 4;
-    for (int y = height - 1; y >= 0; --y) { 
-        for (uint32_t x = 0; x < width; ++x) {
-            uint8_t blue, green, red;
-            std::fread(&blue, sizeof(uint8_t), 1, file);
-            std::fread(&green, sizeof(uint8_t), 1, file);
-            std::fread(&red, sizeof(uint8_t), 1, file);
-
-            uint16_t value = (red + green + blue);
-            (*result.matrix)[BORDER_SIZE + y][BORDER_SIZE + x] = value;
-            if (value >= 4) {
-                result.iter_data.push(Coords(BORDER_SIZE + y, BORDER_SIZE + x));
-            }
-        }
-        std::fseek(file, rowPadding, SEEK_CUR);
-    }
-
-    std::fclose(file);
-    return result;
 }
